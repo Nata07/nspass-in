@@ -34,11 +34,11 @@ export function AttendeeList() {
   }
 
   function handleFilterAttendees(event: ChangeEvent<HTMLInputElement>) {
-    if(event.target.value !== '') {
-      setData(attendees.filter((item) => item.name === event.target.value))
-    } else {
-      setData(attendees)
-    }
+    const filteredData = attendees.filter((attendee) => {
+      return attendee.name.toLowerCase().includes(event.target.value.toLowerCase());
+    });
+    setData(filteredData);
+    setPage(1);
   }
 
 
