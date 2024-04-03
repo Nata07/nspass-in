@@ -3,7 +3,7 @@ import { NavLink } from "./nav-link"
 
 export function Header() {
   return (
-    <header className="flex gap-5 items-center py-2">
+    <header className="flex gap-5 items-center py-2 border-b border-white/10">
       <img src={Logo} alt="Logo NSPass-IN" />
       <nav className="flex items-center gap-5">
         <NavLink href="/eventos">Eventos</NavLink>

@@ -6,6 +6,6 @@ interface ButtonIconProps extends ComponentProps<'button'>{
 
 export function ButtonIcon({transparent, ...props}: ButtonIconProps) {
   return (
-    <button {...props} className={transparent ? "bg-black border border-white/10 rounded-md p-1.5" : "bg-white/10 border border-white/10 rounded-md p-1.5"} />
+    <button {...props} className={transparent ? "bg-black border border-white/10 rounded-md p-1.5" : "bg-white/10 border border-white/10 rounded-md p-1.5 disabled:opacity-20"} />
   )
 }
