@@ -7,12 +7,13 @@ import { attendees } from "../data/attendee";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br"
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
 export function AttendeeList() {
   const [page, setPage] = useState(1)
+  const [data, setData] = useState(attendees);
 
   const totalPages = Math.ceil(attendees.length / 10);
 
@@ -32,6 +33,14 @@ export function AttendeeList() {
     setPage(totalPages);
   }
 
+  function handleFilterAttendees(event: ChangeEvent<HTMLInputElement>) {
+    if(event.target.value !== '') {
+      setData(attendees.filter((item) => item.name === event.target.value))
+    } else {
+      setData(attendees)
+    }
+  }
+
 
   return (
     <div className="flex flex-col gap-4">
@@ -39,7 +48,7 @@ export function AttendeeList() {
         <h1 className="text-2xl font-bold">Participantes</h1>
         <div className="flex items-center gap-3 px-3 bg-transparent w-72 py-1.5 border border-white/10 rounded-lg text-sm">
           <LucideSearch className="size-4 text-emerald-300" />
-          <input className="bg-transparent outline-none p-0 border-0 focus:ring-transparent" type="text" placeholder="Buscar participantes" />
+          <input onChange={handleFilterAttendees} className="bg-transparent outline-none p-0 border-0 focus:ring-transparent" type="text" placeholder="Buscar participantes" />
         </div>
       </div>
       <div className="border border-white/10 rounded-lg">
@@ -57,7 +66,7 @@ export function AttendeeList() {
             </tr>
           </thead>
           <tbody>
-            {attendees.slice((page - 1) * 10, page * 10).map((attendee) => (
+            {data.slice((page - 1) * 10, page * 10).map((attendee) => (
               <tr key={attendee.id} className="border border-white/10 hover:bg-slate-700/10">
                 <TableCell>
                   <input type="checkbox" name="check" id="check" className="size-4 bg-black rounded border border-white/10" />
