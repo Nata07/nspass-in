@@ -3,19 +3,43 @@ import { ButtonIcon } from "./button-icon";
 import { Table } from "./table/table";
 import { TableHeader } from "./table/table-header";
 import { TableCell } from "./table/table-cell";
-import { attendees } from "../data/attendee";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br"
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 dayjs.extend(relativeTime)
 dayjs.locale('pt-br')
 
-export function AttendeeList() {
-  const [page, setPage] = useState(1)
-  const [data, setData] = useState(attendees);
+interface Attendee {
+  id: string
+  name: string
+  email: string
+  createdAt: string
+  checkedInAt: string | null
+}
 
-  const totalPages = Math.ceil(attendees.length / 10);
+export function AttendeeList() {
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+  const [data, setData] = useState<Attendee[]>([]);
+
+  const [total, setTotal] = useState(0)
+  const totalPages = Math.ceil(total / 10);
+
+  console.log(search)
+  useEffect(() => {
+    const url = new URL('http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees')
+    url.searchParams.set('pageIndex', String(page - 1))
+    if(search.length > 0) {
+      url.searchParams.set('query', search)
+    }
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      setData(data.attendees)
+      setTotal(data.total)
+    })
+  }, [page, search])
 
   function onFirstPage() {
     setPage(1);
@@ -34,10 +58,7 @@ export function AttendeeList() {
   }
 
   function handleFilterAttendees(event: ChangeEvent<HTMLInputElement>) {
-    const filteredData = attendees.filter((attendee) => {
-      return attendee.name.toLowerCase().includes(event.target.value.toLowerCase());
-    });
-    setData(filteredData);
+    setSearch(event.target.value)
     setPage(1);
   }
 
@@ -66,7 +87,7 @@ export function AttendeeList() {
             </tr>
           </thead>
           <tbody>
-            {data.slice((page - 1) * 10, page * 10).map((attendee) => (
+            {data.map((attendee) => (
               <tr key={attendee.id} className="border border-white/10 hover:bg-slate-700/10">
                 <TableCell>
                   <input type="checkbox" name="check" id="check" className="size-4 bg-black rounded border border-white/10" />
@@ -79,7 +100,7 @@ export function AttendeeList() {
                   </div>
                 </TableCell>
                 <TableCell>{dayjs().to(attendee.createdAt)}</TableCell>
-                <TableCell>{dayjs().to(attendee.checkInAt)}</TableCell>
+                <TableCell>{!attendee.checkedInAt ? <span className="text-zinc-500">Não fez check-in</span> : dayjs().to(attendee.checkedInAt)}</TableCell>
                 <TableCell>
                   <ButtonIcon transparent>
                     <LucideMoreHorizontal className="size-4" />
@@ -91,11 +112,11 @@ export function AttendeeList() {
           <tfoot>
             <tr>
               <TableCell colSpan={3}>
-                Mostrando 10 de {attendees.length}
+                Mostrando {data.length} de {total} itens
               </TableCell>
               <TableCell className="text-right" colSpan={3}>
                 <div className="inline-flex items-center gap-8">
-                  <span>Pagina {page} de {Math.ceil(attendees.length / 10)}</span>
+                  <span>Pagina {page} de {totalPages}</span>
 
                   <div className="flex gap-1.5">
                     <ButtonIcon onClick={onFirstPage} disabled={page === 1}>
