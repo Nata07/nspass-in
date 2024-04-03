@@ -7,14 +7,16 @@ export function AttendeeList() {
         <h1 className="text-2xl font-bold">Participantes</h1>
         <div className="flex items-center gap-3 px-3 bg-transparent w-72 py-1.5 border border-white/10 rounded-lg text-sm">
           <LucideSearch className="size-4 text-emerald-300" />
-          <input className="bg-transparent outline-none" type="text" placeholder="Buscar participantes" />
+          <input className="bg-transparent outline-none p-0 border-0" type="text" placeholder="Buscar participantes" />
         </div>
       </div>
       <div className="border border-white/10 rounded-lg">
         <table className="w-full">
           <thead>
             <tr className="border border-white/10">
-              <th style={{ width: 64}} className="py-3 px-4 text-sm font-semibold text-left" />
+              <th style={{ width: 64}} className="py-3 px-4 text-sm font-semibold text-left">
+                <input type="checkbox" name="check" id="check" className="size-4 bg-black rounded border border-white/10" />
+              </th>
               <th className="py-3 px-4 text-sm font-semibold text-left">Código</th>
               <th className="py-3 px-4 text-sm font-semibold text-left">Participante</th>
               <th className="py-3 px-4 text-sm font-semibold text-left">Data de inscrição</th>
@@ -24,9 +26,9 @@ export function AttendeeList() {
           </thead>
           <tbody>
             {Array.from({length: 10}).map(() => (
-              <tr key={Math.random().toString()} className="border border-white/10">
+              <tr key={Math.random().toString()} className="border border-white/10 hover:bg-slate-700/10">
                 <td className="py-3 px-4 text-sm text-zinc-300">
-                  <input type="checkbox" name="check" id="check" />
+                  <input type="checkbox" name="check" id="check" className="size-4 bg-black rounded border border-white/10" />
                 </td>
                 <td className="py-3 px-4 text-sm text-zinc-300">12356</td>
                 <td className="py-3 px-4 text-sm text-zinc-300">
