@@ -20,13 +20,19 @@ interface Attendee {
 
 export function AttendeeList() {
   const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
-  const [data, setData] = useState<Attendee[]>([]);
+  const [page, setPage] = useState(() => {
+    const url = new URL(window.location.toString())
+    if(url.searchParams.has('page')) {
+      return Number(url.searchParams.get('page'))
+    }
 
+    return 1
+  })
+  const [data, setData] = useState<Attendee[]>([]);
+  // const page = 1;
   const [total, setTotal] = useState(0)
   const totalPages = Math.ceil(total / 10);
 
-  console.log(search)
   useEffect(() => {
     const url = new URL('http://localhost:3333/events/9e9bd979-9d10-4915-b339-3786b1634f33/attendees')
     url.searchParams.set('pageIndex', String(page - 1))
@@ -41,25 +47,32 @@ export function AttendeeList() {
     })
   }, [page, search])
 
+  function setCurrentPage(page: number) {
+    const url = new URL(window.location.toString())
+    url.searchParams.set('pageIndex', String(page))
+    window.history.pushState({}, "", url)
+    setPage(page)
+  }
+
   function onFirstPage() {
-    setPage(1);
+    setCurrentPage(1);
   }
 
   function onPreviousPage() {
-    setPage(page - 1);
+    setCurrentPage(page - 1);
   }
   
   function onNextPage() {
-    setPage(page + 1);
+    setCurrentPage(page + 1);
   }
 
   function onLastPage() {
-    setPage(totalPages);
+    setCurrentPage(totalPages);
   }
 
   function handleFilterAttendees(event: ChangeEvent<HTMLInputElement>) {
     setSearch(event.target.value)
-    setPage(1);
+    setCurrentPage(1);
   }
 
 
